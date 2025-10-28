@@ -1,0 +1,14 @@
+[project]
+name = "automations"
+version = "0.1.0"
+description = "Project encompassing various automation scripts."
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = []
+
+[tool.uv.workspace]
+members = [
+    "jarvis",
+    "core",
+    "scrapers",
+]
