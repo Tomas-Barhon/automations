@@ -71,7 +71,7 @@ def setup_logger(
 ) -> logging.Logger:
     """
     Configure and return global project logger.
-    
+
     Parameters
     ----------
     name : str, optional
@@ -80,12 +80,12 @@ def setup_logger(
         Logging level, by default logging.INFO.
     log_file : Path, optional
         If provided, also log to this file, by default None.
-    
+
     Returns
     -------
     logging.Logger
         Configured logger instance.
-    
+
     Examples
     --------
     >>> from src.config.logging_config import logger
@@ -94,15 +94,15 @@ def setup_logger(
     """
     logger = logging.getLogger(name)
     logger.setLevel(level)
-    
+
     # Prevent duplicate handlers
     if logger.handlers:
         return logger
-    
+
     # Console handler with formatted output
     console_handler = logging.StreamHandler(sys.stdout)
     console_handler.setLevel(level)
-    
+
     # Readable format with timestamp
     formatter = logging.Formatter(
         fmt='%(asctime)s | %(levelname)-8s | %(name)s | %(message)s',
@@ -110,7 +110,7 @@ def setup_logger(
     )
     console_handler.setFormatter(formatter)
     logger.addHandler(console_handler)
-    
+
     # Optional file handler
     if log_file:
         log_file.parent.mkdir(parents=True, exist_ok=True)
@@ -118,7 +118,7 @@ def setup_logger(
         file_handler.setLevel(level)
         file_handler.setFormatter(formatter)
         logger.addHandler(file_handler)
-    
+
     return logger
 
 # Global logger instance - import this everywhere
@@ -128,12 +128,12 @@ logger = setup_logger()
 def get_module_logger(module_name: str) -> logging.Logger:
     """
     Get a module-specific logger that inherits from global config.
-    
+
     Parameters
     ----------
     module_name : str
         Name of the module (typically __name__).
-    
+
     Returns
     -------
     logging.Logger
@@ -153,19 +153,19 @@ from src.config.logging_config import logger
 def load_data(filepath: Path) -> pd.DataFrame:
     """
     Load data from CSV file.
-    
+
     Parameters
     ----------
     filepath : Path
         Path to CSV file.
-    
+
     Returns
     -------
     pd.DataFrame
         Loaded data.
     """
     logger.info(f"Loading data from {filepath}")
-    
+
     try:
         data = pd.read_csv(filepath)
         logger.info(f"Successfully loaded {len(data):,} rows")
@@ -246,18 +246,18 @@ def train_model(X: np.ndarray, y: np.ndarray, epochs: int = 100) -> Model:
     """Train machine learning model."""
     logger.info(f"Training started with {epochs} epochs")
     logger.debug(f"Training data: X.shape={X.shape}, y.shape={y.shape}")
-    
+
     try:
         model = Model()
         for epoch in range(epochs):
             loss = model.fit_epoch(X, y)
-            
+
             if epoch % 10 == 0:
                 logger.info(f"Epoch {epoch}/{epochs} - Loss: {loss:.4f}")
-        
+
         logger.info("Training completed successfully")
         return model
-        
+
     except Exception as e:
         logger.error(f"Training failed: {e}", exc_info=True)
         raise
@@ -269,22 +269,22 @@ def process_large_dataset(data: pd.DataFrame, batch_size: int = 1000) -> pd.Data
     """Process data in batches with progress logging."""
     total_rows = len(data)
     n_batches = (total_rows + batch_size - 1) // batch_size
-    
+
     logger.info(f"Processing {total_rows:,} rows in {n_batches} batches")
-    
+
     results = []
     for i, batch_start in enumerate(range(0, total_rows, batch_size)):
         batch_end = min(batch_start + batch_size, total_rows)
         batch = data.iloc[batch_start:batch_end]
-        
+
         processed = process_batch(batch)
         results.append(processed)
-        
+
         # Log progress every 10 batches or at 25%, 50%, 75%
         if (i + 1) % 10 == 0 or (i + 1) / n_batches in [0.25, 0.5, 0.75]:
             pct = ((i + 1) / n_batches) * 100
             logger.info(f"Progress: {i + 1}/{n_batches} batches ({pct:.1f}%)")
-    
+
     logger.info("Processing complete")
     return pd.concat(results, ignore_index=True)
 ```
@@ -294,12 +294,12 @@ def process_large_dataset(data: pd.DataFrame, batch_size: int = 1000) -> pd.Data
 def load_and_validate_data(filepath: Path) -> pd.DataFrame:
     """Load and validate data with comprehensive error logging."""
     logger.info(f"Loading data from {filepath}")
-    
+
     # Check file exists
     if not filepath.exists():
         logger.error(f"File does not exist: {filepath}")
         raise FileNotFoundError(f"Data file not found: {filepath}")
-    
+
     # Load data
     try:
         data = pd.read_csv(filepath)
@@ -310,16 +310,16 @@ def load_and_validate_data(filepath: Path) -> pd.DataFrame:
     except Exception as e:
         logger.error(f"Failed to read CSV: {e}")
         raise
-    
+
     # Validate
     required_columns = {'feature_1', 'feature_2', 'target'}
     missing = required_columns - set(data.columns)
-    
+
     if missing:
         logger.error(f"Missing required columns: {missing}")
         logger.debug(f"Available columns: {data.columns.tolist()}")
         raise ValueError(f"Missing columns: {missing}")
-    
+
     logger.info("Data validation passed")
     return data
 ```
@@ -334,7 +334,7 @@ def log_execution_time(operation: str):
     """Context manager to log operation duration."""
     start_time = time.time()
     logger.info(f"{operation} started")
-    
+
     try:
         yield
     finally:
@@ -354,7 +354,7 @@ def expensive_operation(data: pd.DataFrame) -> pd.DataFrame:
 def log_data_statistics(data: pd.DataFrame, name: str = "data") -> None:
     """
     Log comprehensive statistics about a dataframe.
-    
+
     Parameters
     ----------
     data : pd.DataFrame
@@ -365,7 +365,7 @@ def log_data_statistics(data: pd.DataFrame, name: str = "data") -> None:
     logger.info(f"{name} statistics:")
     logger.info(f"  Shape: {data.shape}")
     logger.info(f"  Memory: {data.memory_usage(deep=True).sum() / 1024**2:.2f} MB")
-    
+
     # Missing values
     missing = data.isnull().sum()
     if missing.any():
@@ -373,11 +373,11 @@ def log_data_statistics(data: pd.DataFrame, name: str = "data") -> None:
         logger.warning(f"  Missing values: {dict(missing_pct[missing_pct > 0])}")
     else:
         logger.info("  No missing values")
-    
+
     # Data types
     dtype_counts = data.dtypes.value_counts()
     logger.debug(f"  Data types: {dict(dtype_counts)}")
-    
+
     # Numerical summary
     numeric_cols = data.select_dtypes(include=[np.number]).columns
     if len(numeric_cols) > 0:
@@ -470,11 +470,11 @@ def analyze_data(data: pd.DataFrame) -> dict:
     """Analyze data and return statistics."""
     logger.info("Starting data analysis")
     logger.debug(f"Input shape: {data.shape}")
-    
+
     stats = data.describe()
     logger.info("Statistics calculated successfully")
     logger.debug(f"Mean values: {stats.loc['mean'].to_dict()}")
-    
+
     return stats
 ```
 
@@ -488,24 +488,24 @@ import os
 def setup_logger(name: str = "project_logger") -> logging.Logger:
     """Setup logger with environment-specific configuration."""
     logger = logging.getLogger(name)
-    
+
     # Set level based on environment
     env = os.getenv("ENVIRONMENT", "development")
     level = logging.DEBUG if env == "development" else logging.INFO
     logger.setLevel(level)
-    
+
     # More verbose format in development
     if env == "development":
         fmt = '%(asctime)s | %(levelname)-8s | %(name)s:%(lineno)d | %(message)s'
     else:
         fmt = '%(asctime)s | %(levelname)-8s | %(name)s | %(message)s'
-    
+
     formatter = logging.Formatter(fmt=fmt, datefmt='%Y-%m-%d %H:%M:%S')
-    
+
     handler = logging.StreamHandler(sys.stdout)
     handler.setFormatter(formatter)
     logger.addHandler(handler)
-    
+
     return logger
 ```
 

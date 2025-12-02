@@ -90,21 +90,21 @@ indent-style = "space"
 #### 1. Starting a New Project
 **Use: Architect Agent**
 ```
-"As the Architect, help me set up a project for [description]. 
+"As the Architect, help me set up a project for [description].
 What structure and main classes should I create?"
 ```
 
 #### 2. Exploring New Data
 **Use: Analyst Agent**
 ```
-"As the Analyst, create an exploratory notebook for this dataset. 
+"As the Analyst, create an exploratory notebook for this dataset.
 File: data/raw/dataset.csv"
 ```
 
 #### 3. Implementing Features
 **Use: Developer Agent**
 ```
-"As the Developer, implement a data preprocessing pipeline 
+"As the Developer, implement a data preprocessing pipeline
 with proper type hints and logging."
 ```
 
@@ -117,14 +117,14 @@ with proper type hints and logging."
 #### 5. Reviewing Code
 **Use: Code Reviewer Agent**
 ```
-"As the Code Reviewer, review src/data/preprocessing.py 
+"As the Code Reviewer, review src/data/preprocessing.py
 and update IMPROVEMENTS.md with any issues."
 ```
 
 #### 6. Fixing Logging Issues
 **Use: Logging Master Agent**
 ```
-"As the Logging Master, review this module and replace 
+"As the Logging Master, review this module and replace
 print statements with proper logging."
 ```
 
@@ -210,13 +210,13 @@ The `IMPROVEMENTS.md` file is central to maintaining code quality:
 
 **✅ Specific**:
 ```
-"As the Developer, refactor this function to follow SRP 
+"As the Developer, refactor this function to follow SRP
 and add type hints"
 
-"As the Code Reviewer, identify SOLID principle violations 
+"As the Code Reviewer, identify SOLID principle violations
 in this class"
 
-"As the Tester, write unit tests for edge cases in 
+"As the Tester, write unit tests for edge cases in
 the normalize_data function"
 ```
 
@@ -250,25 +250,25 @@ the normalize_data function"
 "As the Architect, design a model training pipeline"
 
 # 2. Implement (Developer)
-"As the Developer, implement the ModelTrainer class 
+"As the Developer, implement the ModelTrainer class
 with type hints and logging"
 
 # 3. Test (Tester)
 "As the Tester, create tests for ModelTrainer"
 
 # 4. Review (Code Reviewer)
-"As the Code Reviewer, review the training pipeline 
+"As the Code Reviewer, review the training pipeline
 and update IMPROVEMENTS.md"
 ```
 
 ### Pattern 2: Code Cleanup
 ```bash
 # 1. Identify (Code Reviewer)
-"As the Code Reviewer, review src/data/ for 
+"As the Code Reviewer, review src/data/ for
 code quality issues"
 
 # 2. Fix (Developer)
-"As the Developer, refactor the DataProcessor class 
+"As the Developer, refactor the DataProcessor class
 based on reviewer feedback"
 
 # 3. Verify (Tester)
@@ -294,32 +294,32 @@ based on reviewer feedback"
 
 ### 1. Be Specific About Context
 ```
-"As the Developer, I'm working on a time series forecasting 
-project using DARTS. Implement a function to prepare 
+"As the Developer, I'm working on a time series forecasting
+project using DARTS. Implement a function to prepare
 sequences for LSTM training."
 ```
 
 ### 2. Reference Existing Code
 ```
-"As the Code Reviewer, review this code from 
+"As the Code Reviewer, review this code from
 src/models/train.py lines 45-80. Check for SOLID violations."
 ```
 
 ### 3. Ask for Explanations
 ```
-"As the Architect, explain why dependency injection is 
+"As the Architect, explain why dependency injection is
 better than direct instantiation in this case."
 ```
 
 ### 4. Request Examples
 ```
-"As the Tester, show me how to test a function that uses 
+"As the Tester, show me how to test a function that uses
 pandas DataFrames with pytest fixtures."
 ```
 
 ### 5. Combine Agents When Needed
 ```
-"As the Code Reviewer and Logging Master together, 
+"As the Code Reviewer and Logging Master together,
 review this module for both code quality and logging issues."
 ```
 

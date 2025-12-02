@@ -53,7 +53,7 @@ class DataProcessor:
     """Process data independently of loading mechanism."""
     def __init__(self, loader: DataLoader):
         self._loader = loader
-    
+
     def process_file(self, path: Path) -> pd.DataFrame:
         data = self._loader.load(path)
         return self._clean(data)

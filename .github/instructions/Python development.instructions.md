@@ -57,7 +57,7 @@ class DataConfig:
 
 class DataProcessor(ABC):
     """Abstract base for data processors."""
-    
+
     @abstractmethod
     def process(self, data: list[float]) -> list[float]:
         """Process the input data."""
@@ -77,10 +77,10 @@ def validate_and_process(data: list[float]) -> list[float]:
     """Validate and process data."""
     if not data:
         return []
-    
+
     if not all(isinstance(x, (int, float)) for x in data):
         raise ValueError("All elements must be numeric")
-    
+
     return [x * 2 for x in data if x > 0]
 ```
 
@@ -94,7 +94,7 @@ def validate_and_process(data: list[float]) -> list[float]:
 def train_model(X: np.ndarray, y: np.ndarray, epochs: int = 100) -> Model:
     """
     Train a machine learning model on provided data.
-    
+
     Parameters
     ----------
     X : np.ndarray
@@ -103,17 +103,17 @@ def train_model(X: np.ndarray, y: np.ndarray, epochs: int = 100) -> Model:
         Target values of shape (n_samples,).
     epochs : int, optional
         Number of training epochs, by default 100.
-    
+
     Returns
     -------
     Model
         Trained model instance.
-    
+
     Raises
     ------
     ValueError
         If X and y have incompatible shapes.
-    
+
     Examples
     --------
     >>> X = np.random.rand(100, 5)
@@ -153,12 +153,12 @@ from datetime import datetime
 def setup_logger(name: str = "project_logger") -> logging.Logger:
     """
     Configure and return global logger.
-    
+
     Parameters
     ----------
     name : str, optional
         Logger name, by default "project_logger".
-    
+
     Returns
     -------
     logging.Logger
@@ -166,7 +166,7 @@ def setup_logger(name: str = "project_logger") -> logging.Logger:
     """
     logger = logging.getLogger(name)
     logger.setLevel(logging.INFO)
-    
+
     handler = logging.StreamHandler(sys.stdout)
     formatter = logging.Formatter(
         fmt='%(asctime)s | %(levelname)-8s | %(name)s | %(message)s',
@@ -174,7 +174,7 @@ def setup_logger(name: str = "project_logger") -> logging.Logger:
     )
     handler.setFormatter(formatter)
     logger.addHandler(handler)
-    
+
     return logger
 
 # Global logger instance
@@ -190,7 +190,7 @@ def train_model(data: pd.DataFrame) -> Model:
     """Train model on provided data."""
     logger.info("Starting model training")
     logger.debug(f"Training data shape: {data.shape}")
-    
+
     try:
         model = fit_model(data)
         logger.info("Model training completed successfully")
@@ -221,12 +221,12 @@ class DataValidationError(Exception):
 def validate_data(data: pd.DataFrame) -> None:
     """
     Validate input data structure.
-    
+
     Parameters
     ----------
     data : pd.DataFrame
         Input data to validate.
-    
+
     Raises
     ------
     DataValidationError
@@ -235,10 +235,10 @@ def validate_data(data: pd.DataFrame) -> None:
     if data.empty:
         logger.error("Received empty dataframe")
         raise DataValidationError("Data cannot be empty")
-    
+
     required_columns = {'feature_1', 'feature_2', 'target'}
     missing = required_columns - set(data.columns)
-    
+
     if missing:
         logger.error(f"Missing required columns: {missing}")
         raise DataValidationError(f"Missing columns: {missing}")

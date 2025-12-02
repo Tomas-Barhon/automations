@@ -26,10 +26,10 @@ def process_valid_records(records: list[dict]) -> list[dict]:
     """Process records that pass validation."""
     if not records:
         return []
-    
+
     valid_records = [r for r in records if is_valid(r)]
     logger.info(f"Processing {len(valid_records)} valid records")
-    
+
     return [transform_record(r) for r in valid_records]
 
 def is_valid(record: dict) -> bool:
@@ -81,7 +81,7 @@ def apply_to_columns(
 ) -> pd.DataFrame:
     """
     Apply function to specified columns.
-    
+
     Parameters
     ----------
     data : pd.DataFrame
@@ -90,7 +90,7 @@ def apply_to_columns(
         Column names to transform.
     func : Callable[[pd.Series], pd.Series]
         Transformation function.
-    
+
     Returns
     -------
     pd.DataFrame
@@ -131,17 +131,17 @@ filt_recs = [r for r in recs if r['st'] == 'act']
 def load_model(path: Path) -> Model:
     """
     Load trained model from disk.
-    
+
     Parameters
     ----------
     path : Path
         Path to model file.
-    
+
     Returns
     -------
     Model
         Loaded model instance.
-    
+
     Raises
     ------
     FileNotFoundError
@@ -152,7 +152,7 @@ def load_model(path: Path) -> Model:
     if not path.exists():
         logger.error(f"Model file not found: {path}")
         raise FileNotFoundError(f"Model file not found: {path}")
-    
+
     try:
         model = joblib.load(path)
         logger.info(f"Model loaded successfully from {path}")
@@ -175,14 +175,14 @@ def train_model(X: np.ndarray, y: np.ndarray, epochs: int) -> Model:
     """Train model with logging."""
     logger.info(f"Starting training with {epochs} epochs")
     logger.debug(f"Training data shape: X={X.shape}, y={y.shape}")
-    
+
     model = Model()
     for epoch in range(epochs):
         loss = model.fit_epoch(X, y)
-        
+
         if epoch % 10 == 0:
             logger.info(f"Epoch {epoch}/{epochs}, Loss: {loss:.4f}")
-    
+
     logger.info("Training completed successfully")
     return model
 ```
@@ -218,7 +218,7 @@ def prepare_training_data(
 ) -> tuple[np.ndarray, np.ndarray]:
     """
     Prepare data for model training.
-    
+
     Parameters
     ----------
     data : pd.DataFrame
@@ -227,20 +227,20 @@ def prepare_training_data(
         Name of target column.
     random_state : int, optional
         Random seed for reproducibility, by default 42.
-    
+
     Returns
     -------
     tuple[np.ndarray, np.ndarray]
         Features (X) and target (y) arrays.
     """
     logger.info(f"Preparing training data from {data.shape}")
-    
+
     X = data.drop(columns=[target_col]).values
     y = data[target_col].values
-    
+
     logger.debug(f"Feature matrix shape: {X.shape}")
     logger.debug(f"Target vector shape: {y.shape}")
-    
+
     return X, y
 ```
 

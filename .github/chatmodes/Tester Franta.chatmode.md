@@ -63,31 +63,31 @@ from src.data.preprocessing import (
 
 class TestNormalizeData:
     """Tests for normalize_data function."""
-    
+
     def test_normalize_returns_zero_mean(self) -> None:
         """Test that normalized data has mean close to zero."""
         data = np.array([1.0, 2.0, 3.0, 4.0, 5.0])
         result = normalize_data(data)
         assert abs(result.mean()) < 1e-10
-    
+
     def test_normalize_returns_unit_variance(self) -> None:
         """Test that normalized data has variance close to 1."""
         data = np.array([1.0, 2.0, 3.0, 4.0, 5.0])
         result = normalize_data(data)
         assert abs(result.std() - 1.0) < 1e-10
-    
+
     def test_normalize_handles_empty_array(self) -> None:
         """Test behavior with empty input."""
         data = np.array([])
         result = normalize_data(data)
         assert len(result) == 0
-    
+
     def test_normalize_raises_on_nan(self) -> None:
         """Test that NaN input raises ValueError."""
         data = np.array([1.0, np.nan, 3.0])
         with pytest.raises(ValueError, match="Input contains NaN"):
             normalize_data(data)
-    
+
     def test_normalize_preserves_shape(self) -> None:
         """Test that output shape matches input shape."""
         data = np.random.rand(10, 5)
@@ -96,13 +96,13 @@ class TestNormalizeData:
 
 class TestRemoveOutliers:
     """Tests for remove_outliers function."""
-    
+
     def test_removes_high_outliers(self) -> None:
         """Test that values above threshold are removed."""
         data = np.array([1, 2, 3, 4, 100])
         result = remove_outliers(data, threshold=3.0)
         assert 100 not in result
-    
+
     def test_keeps_normal_values(self) -> None:
         """Test that normal values are preserved."""
         data = np.array([1, 2, 3, 4, 5])
@@ -125,7 +125,7 @@ from pathlib import Path
 def sample_data() -> pd.DataFrame:
     """
     Provide sample dataframe for testing.
-    
+
     Returns
     -------
     pd.DataFrame
@@ -146,12 +146,12 @@ def sample_array() -> np.ndarray:
 def temp_data_file(tmp_path: Path) -> Path:
     """
     Create temporary data file for testing.
-    
+
     Parameters
     ----------
     tmp_path : Path
         Pytest's temporary directory fixture.
-    
+
     Returns
     -------
     Path
@@ -166,17 +166,17 @@ def temp_data_file(tmp_path: Path) -> Path:
 def mock_logger(monkeypatch):
     """Mock logger for testing log calls."""
     logs = []
-    
+
     class MockLogger:
         def info(self, msg: str) -> None:
             logs.append(('INFO', msg))
-        
+
         def error(self, msg: str) -> None:
             logs.append(('ERROR', msg))
-        
+
         def debug(self, msg: str) -> None:
             logs.append(('DEBUG', msg))
-    
+
     monkeypatch.setattr('src.config.logging_config.logger', MockLogger())
     return logs
 ```
@@ -197,7 +197,7 @@ def test_load_from_file(temp_data_file: Path) -> None:
 def test_function_logs_correctly(mock_logger: list) -> None:
     """Test that function logs expected messages."""
     process_data_with_logging()
-    assert any('INFO' in log[0] and 'Processing started' in log[1] 
+    assert any('INFO' in log[0] and 'Processing started' in log[1]
                for log in mock_logger)
 ```
 
@@ -228,16 +228,16 @@ def test_transform_with_missing_column_raises() -> None:
 ```python
 class TestDataProcessor:
     """Tests for DataProcessor class."""
-    
+
     @pytest.fixture
     def processor(self) -> DataProcessor:
         """Create DataProcessor instance for tests."""
         return DataProcessor(threshold=0.5)
-    
+
     def test_initialization(self, processor: DataProcessor) -> None:
         """Test processor initializes correctly."""
         assert processor.threshold == 0.5
-    
+
     def test_process_filters_below_threshold(
         self,
         processor: DataProcessor
@@ -246,7 +246,7 @@ class TestDataProcessor:
         data = np.array([0.3, 0.7, 0.4, 0.9])
         result = processor.process(data)
         assert all(x >= 0.5 for x in result)
-    
+
     def test_process_returns_empty_when_all_filtered(
         self,
         processor: DataProcessor
@@ -268,7 +268,7 @@ def test_train_model_raises_on_shape_mismatch() -> None:
     """Test that shape mismatch raises ValueError."""
     X = np.random.rand(10, 5)
     y = np.random.rand(15)  # Wrong size
-    
+
     with pytest.raises(ValueError, match="Shape mismatch"):
         train_model(X, y)
 
@@ -315,16 +315,16 @@ def test_save_model_calls_joblib(tmp_path: Path) -> None:
     with patch('joblib.dump') as mock_dump:
         model = Mock()
         save_path = tmp_path / "model.pkl"
-        
+
         save_model(model, save_path)
-        
+
         mock_dump.assert_called_once_with(model, save_path)
 
 def test_api_request_handles_failure() -> None:
     """Test error handling for failed API request."""
     with patch('requests.get') as mock_get:
         mock_get.side_effect = requests.RequestException("Connection failed")
-        
+
         with pytest.raises(DataFetchError):
             fetch_external_data()
 ```
@@ -373,7 +373,7 @@ class TestDataProcessor:
         processor = DataProcessor()
         result = processor.process([1, 2, 3])
         assert len(result) == 3
-    
+
     def test_process_case_2(self) -> None:
         processor = DataProcessor()
         result = processor.process([])
@@ -383,7 +383,7 @@ class TestDataProcessor:
 class TestDataProcessor:
     def test_initialize(self) -> None:
         self.processor = DataProcessor()  # Don't store state
-    
+
     def test_process(self) -> None:
         result = self.processor.process([1, 2, 3])  # Depends on test_initialize
 ```

@@ -11,4 +11,32 @@ members = [
     "jarvis",
     "core",
     "scrapers",
+    "dashboards",
 ]
+
+[tool.ruff]
+line-length = 79
+target-version = "py312"
+
+[tool.ruff.lint]
+select = [
+    "E",
+    "F",
+    "W",
+    "I",
+    "B",
+]
+ignore = []
+
+[tool.ruff.lint.isort]
+known-first-party = [
+    "core",
+    "dashboards",
+    "jarvis",
+    "scrapers",
+]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "lf"

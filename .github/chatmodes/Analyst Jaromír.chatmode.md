@@ -64,7 +64,7 @@ plt.rcParams['figure.figsize'] = (12, 6)
 def explore_dataset(data: pd.DataFrame) -> None:
     """
     Perform initial exploration of dataset.
-    
+
     Parameters
     ----------
     data : pd.DataFrame
@@ -73,17 +73,17 @@ def explore_dataset(data: pd.DataFrame) -> None:
     print("=" * 80)
     print("DATASET OVERVIEW")
     print("=" * 80)
-    
+
     # Basic info
     print(f"\nShape: {data.shape}")
     print(f"Memory usage: {data.memory_usage(deep=True).sum() / 1024**2:.2f} MB")
-    
+
     # Data types
     print("\n" + "=" * 80)
     print("DATA TYPES")
     print("=" * 80)
     print(data.dtypes.value_counts())
-    
+
     # Missing values
     print("\n" + "=" * 80)
     print("MISSING VALUES")
@@ -95,14 +95,14 @@ def explore_dataset(data: pd.DataFrame) -> None:
         'Percentage': missing_pct
     })
     print(missing_df[missing_df['Missing'] > 0].sort_values('Missing', ascending=False))
-    
+
     # Numerical columns summary
     print("\n" + "=" * 80)
     print("NUMERICAL FEATURES")
     print("=" * 80)
     numeric_cols = data.select_dtypes(include=[np.number]).columns
     print(data[numeric_cols].describe())
-    
+
     # Categorical columns
     print("\n" + "=" * 80)
     print("CATEGORICAL FEATURES")
@@ -121,10 +121,10 @@ def explore_dataset(data: pd.DataFrame) -> None:
 ```python
 # %% [markdown]
 # # Dataset Exploration: [Dataset Name]
-# 
+#
 # **Date**: 2024-01-15
 # **Analyst**: [Your Name]
-# 
+#
 # ## Objective
 # Initial exploration of [dataset] to understand structure, quality, and patterns.
 
@@ -178,7 +178,7 @@ plt.show()
 target_col = 'target'
 if target_col in df.columns:
     print(df[target_col].value_counts(normalize=True))
-    
+
     # Visualize distribution
     df[target_col].hist(bins=50)
     plt.title(f"Distribution of {target_col}")
@@ -215,7 +215,7 @@ plt.show()
 # High correlations
 threshold = 0.8
 high_corr = np.where(np.abs(corr_matrix) > threshold)
-high_corr_list = [(corr_matrix.index[x], corr_matrix.columns[y], corr_matrix.iloc[x, y]) 
+high_corr_list = [(corr_matrix.index[x], corr_matrix.columns[y], corr_matrix.iloc[x, y])
                   for x, y in zip(*high_corr) if x != y and x < y]
 
 if high_corr_list:
@@ -243,21 +243,21 @@ for col in numeric_cols[:5]:  # Check first 5 numeric columns
 
 # %% [markdown]
 # ## 8. Summary & Recommendations
-# 
+#
 # ### Key Findings:
 # 1. [Finding 1]
 # 2. [Finding 2]
 # 3. [Finding 3]
-# 
+#
 # ### Data Quality Issues:
 # - [Issue 1]
 # - [Issue 2]
-# 
+#
 # ### Recommended Next Steps:
 # 1. [Action 1]
 # 2. [Action 2]
 # 3. [Action 3]
-# 
+#
 # ### Potential Modeling Approaches:
 # - [Approach 1]: Because [reasoning]
 # - [Approach 2]: Consider if [condition]
@@ -270,12 +270,12 @@ for col in numeric_cols[:5]:  # Check first 5 numeric columns
 def comprehensive_quality_check(data: pd.DataFrame) -> dict[str, any]:
     """
     Perform comprehensive data quality assessment.
-    
+
     Parameters
     ----------
     data : pd.DataFrame
         Dataset to assess.
-    
+
     Returns
     -------
     dict[str, any]
@@ -290,19 +290,19 @@ def comprehensive_quality_check(data: pd.DataFrame) -> dict[str, any]:
         'outliers': {},
         'data_types': {}
     }
-    
+
     # Missing values
     missing = data.isnull().sum()
     issues['missing_values'] = missing[missing > 0].to_dict()
-    
+
     # Duplicates
     issues['duplicates'] = data.duplicated().sum()
-    
+
     # Constant columns (no variation)
     for col in data.columns:
         if data[col].nunique() == 1:
             issues['constant_columns'].append(col)
-    
+
     # High cardinality (potential IDs)
     for col in data.select_dtypes(include=['object']).columns:
         unique_ratio = data[col].nunique() / len(data)
@@ -310,12 +310,12 @@ def comprehensive_quality_check(data: pd.DataFrame) -> dict[str, any]:
             issues['potential_ids'].append(col)
         elif unique_ratio > 0.5:
             issues['high_cardinality'].append(col)
-    
+
     # Incorrect data types
     for col in data.columns:
         if col.lower() in ['date', 'time', 'timestamp'] and data[col].dtype == 'object':
             issues['data_types'][col] = 'Should be datetime'
-    
+
     return issues
 ```
 
@@ -334,16 +334,16 @@ def plot_numerical_distributions(data: pd.DataFrame, cols: list[str]) -> None:
     """Create distribution plots for numerical columns."""
     n_cols = len(cols)
     fig, axes = plt.subplots(nrows=n_cols, ncols=2, figsize=(15, 4*n_cols))
-    
+
     for idx, col in enumerate(cols):
         # Histogram
         data[col].hist(bins=50, ax=axes[idx, 0], edgecolor='black')
         axes[idx, 0].set_title(f'{col} - Histogram')
-        
+
         # Box plot
         data.boxplot(column=col, ax=axes[idx, 1])
         axes[idx, 1].set_title(f'{col} - Box Plot')
-    
+
     plt.tight_layout()
     plt.show()
 
@@ -354,10 +354,10 @@ def plot_target_relationships(
 ) -> None:
     """Plot relationships between features and target."""
     n_features = len(features)
-    fig, axes = plt.subplots(nrows=(n_features+2)//3, ncols=3, 
+    fig, axes = plt.subplots(nrows=(n_features+2)//3, ncols=3,
                             figsize=(15, 4*((n_features+2)//3)))
     axes = axes.flatten()
-    
+
     for idx, feat in enumerate(features):
         if data[feat].dtype in [np.float64, np.int64]:
             axes[idx].scatter(data[feat], data[target], alpha=0.5)
@@ -367,7 +367,7 @@ def plot_target_relationships(
             data.groupby(feat)[target].mean().plot(kind='bar', ax=axes[idx])
             axes[idx].set_xlabel(feat)
             axes[idx].set_ylabel(f'Mean {target}')
-    
+
     plt.tight_layout()
     plt.show()
 ```

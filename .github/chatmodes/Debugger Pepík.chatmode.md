@@ -109,29 +109,29 @@ def process_data(data: pd.DataFrame) -> pd.DataFrame:
     logger.debug(f"Input shape: {data.shape}")
     logger.debug(f"Input columns: {data.columns.tolist()}")
     logger.debug(f"Value column stats: min={data['value'].min()}, max={data['value'].max()}")
-    
+
     # Filter
     filtered = data[data['value'] > 0]
     logger.debug(f"After filtering: {len(filtered)} rows (kept {len(filtered)/len(data)*100:.1f}%)")
-    
+
     if len(filtered) == 0:
         logger.warning("All data filtered out! Check threshold.")
         return pd.DataFrame()
-    
+
     # Normalize
     max_val = filtered['value'].max()
     logger.debug(f"Max value for normalization: {max_val}")
-    
+
     if max_val == 0:
         logger.error("Cannot normalize: max value is 0")
         raise ValueError("Cannot normalize data with max value of 0")
-    
+
     normalized = filtered['value'] / max_val
     logger.debug(f"Normalized range: [{normalized.min():.3f}, {normalized.max():.3f}]")
-    
+
     result = filtered.assign(normalized=normalized)
     logger.debug(f"Output shape: {result.shape}")
-    
+
     return result
 ```
 
@@ -140,40 +140,40 @@ def process_data(data: pd.DataFrame) -> pd.DataFrame:
 def train_model(X: np.ndarray, y: np.ndarray) -> Model:
     """Train model with input validation."""
     from src.config.logging_config import logger
-    
+
     # Validate shapes
     logger.debug(f"Training data shapes: X={X.shape}, y={y.shape}")
-    
+
     if len(X) != len(y):
         logger.error(f"Shape mismatch: X has {len(X)} samples, y has {len(y)}")
         raise ValueError(f"X and y must have same length: {len(X)} != {len(y)}")
-    
+
     if len(X) == 0:
         logger.error("Cannot train on empty dataset")
         raise ValueError("Training data is empty")
-    
+
     # Validate data types
     if not np.issubdtype(X.dtype, np.number):
         logger.error(f"X has non-numeric dtype: {X.dtype}")
         raise TypeError(f"X must be numeric, got {X.dtype}")
-    
+
     # Check for invalid values
     if np.isnan(X).any():
         n_nan = np.isnan(X).sum()
         logger.error(f"X contains {n_nan} NaN values")
         raise ValueError(f"X contains {n_nan} NaN values")
-    
+
     if np.isinf(X).any():
         n_inf = np.isinf(X).sum()
         logger.error(f"X contains {n_inf} infinite values")
         raise ValueError(f"X contains {n_inf} infinite values")
-    
+
     logger.info("Input validation passed, starting training")
-    
+
     # Train model
     model = Model()
     model.fit(X, y)
-    
+
     return model
 ```
 
@@ -191,34 +191,34 @@ def complex_pipeline(data: pd.DataFrame) -> pd.DataFrame:
 def debug_pipeline(data: pd.DataFrame) -> pd.DataFrame:
     """Debug version of pipeline with intermediate checks."""
     from src.config.logging_config import logger
-    
+
     logger.info("=== Starting Pipeline Debug ===")
-    
+
     # Step 1
     logger.info("Step 1: Loading data")
     data = load_data(data)
     logger.debug(f"After load: shape={data.shape}, columns={data.columns.tolist()}")
     assert data is not None, "load_data returned None"
     assert len(data) > 0, "load_data returned empty DataFrame"
-    
+
     # Step 2
     logger.info("Step 2: Cleaning data")
     data = clean_data(data)
     logger.debug(f"After clean: shape={data.shape}")
     assert data is not None, "clean_data returned None"
-    
+
     # Step 3
     logger.info("Step 3: Transforming data")
     data = transform_data(data)
     logger.debug(f"After transform: shape={data.shape}")
     assert data is not None, "transform_data returned None"
-    
+
     # Step 4
     logger.info("Step 4: Engineering features")
     data = engineer_features(data)
     logger.debug(f"After engineer: shape={data.shape}, columns={data.columns.tolist()}")
     assert data is not None, "engineer_features returned None"
-    
+
     logger.info("=== Pipeline Debug Complete ===")
     return data
 ```
@@ -229,7 +229,7 @@ def debug_pipeline(data: pd.DataFrame) -> pd.DataFrame:
 def find_problem_in_large_function():
     """Large function with bug somewhere."""
     # ... 100 lines of code ...
-    
+
     # Add checkpoints
     checkpoint("After initialization")  # Works
     # ... 30 lines ...
@@ -243,7 +243,7 @@ def checkpoint(label: str):
     """Debug checkpoint."""
     from src.config.logging_config import logger
     import traceback
-    
+
     logger.info(f"✓ Checkpoint: {label}")
     try:
         # Add any validation here
@@ -347,12 +347,12 @@ subset['B'] = [4, 5]  # ✅ Safe
 # Add breakpoint for interactive debugging
 def problematic_function(data: pd.DataFrame) -> pd.DataFrame:
     # ... some code ...
-    
+
     # Drop into debugger at this point
     import pdb; pdb.set_trace()  # Python debugger
     # OR
     breakpoint()  # Python 3.7+
-    
+
     # ... more code ...
     return result
 
@@ -371,7 +371,7 @@ def process_batch(batch: pd.DataFrame, batch_id: int) -> pd.DataFrame:
     # Only break on specific batch
     if batch_id == 42:
         breakpoint()  # Debug batch 42
-    
+
     result = transform(batch)
     return result
 ```
@@ -389,11 +389,11 @@ def main():
         # Print full traceback
         logger.error("Fatal error occurred:")
         logger.error(traceback.format_exc())
-        
+
         # Drop into debugger at point of exception
         import pdb
         pdb.post_mortem()
-        
+
         sys.exit(1)
 ```
 
@@ -439,7 +439,7 @@ When helping with a bug, provide:
 **Root Cause**: Input data contains string 'missing' instead of numeric values
 
 ### Why This Happens
-Your data has missing values encoded as the string 'missing' instead of proper NaN values. 
+Your data has missing values encoded as the string 'missing' instead of proper NaN values.
 When sklearn tries to convert to float array, it fails on the string.
 
 ### Immediate Fix
@@ -459,12 +459,12 @@ def load_data(filepath: Path) -> pd.DataFrame:
         filepath,
         na_values=['missing', 'NA', 'N/A', '']  # ✅ Convert to NaN on load
     )
-    
+
     # Log missing value info
     missing = data.isnull().sum()
     if missing.any():
         logger.warning(f"Missing values found: {dict(missing[missing > 0])}")
-    
+
     return data
 
 def prepare_training_data(data: pd.DataFrame) -> tuple[np.ndarray, np.ndarray]:
@@ -472,15 +472,15 @@ def prepare_training_data(data: pd.DataFrame) -> tuple[np.ndarray, np.ndarray]:
     # Validate no unexpected strings remain
     for col in data.select_dtypes(include=['object']).columns:
         logger.warning(f"Column '{col}' has object dtype, may contain strings")
-    
+
     # Handle missing values explicitly
     if data.isnull().any().any():
         logger.info("Filling missing values with column means")
         data = data.fillna(data.mean())
-    
+
     X = data.drop(columns=['target']).values
     y = data['target'].values
-    
+
     return X, y
 ```
 

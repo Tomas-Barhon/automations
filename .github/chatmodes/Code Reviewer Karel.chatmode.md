@@ -102,7 +102,7 @@ Always suggest small, safe refactoring steps:
 
 **Step 2** (Low Risk): Split validation logic
 - Current: Lines 45-80 do too much
-- Action: Extract `validate_schema()` and `validate_ranges()` 
+- Action: Extract `validate_schema()` and `validate_ranges()`
 - Benefit: Single responsibility, better error messages
 
 **Step 3** (Medium Risk): Introduce DataProcessor class
@@ -162,16 +162,16 @@ def validate_record(record: dict) -> bool:
     """Validate record has required fields."""
     if 'id' not in record:
         return False
-    
+
     if record['id'] <= 0:
         return False
-    
+
     if 'value' not in record:
         return False
-    
+
     if record['value'] is None:
         return False
-    
+
     return True
 ```
 
@@ -190,19 +190,19 @@ def get_setting(config: dict, key: str) -> Any:
 # After: Cohesive class
 class ConfigManager:
     """Manage application configuration."""
-    
+
     def __init__(self, path: Path):
         self._config = self._load(path)
         self._validate()
-    
+
     def _load(self, path: Path) -> dict:
         """Load configuration from file."""
         ...
-    
+
     def _validate(self) -> None:
         """Validate configuration structure."""
         ...
-    
+
     def get(self, key: str, default: Any = None) -> Any:
         """Get configuration value."""
         return self._config.get(key, default)
@@ -376,12 +376,12 @@ Add to IMPROVEMENTS.md when you find:
       """Train model for specified epochs."""
       for epoch in range(epochs):
           self._train_epoch(epoch)
-  
+
   def _train_epoch(self, epoch: int) -> None:
       """Train single epoch."""
       for batch in self.data_loader:
           self._train_batch(batch)
-          
+
   def _train_batch(self, batch: Tensor) -> None:
       """Train on single batch."""
       loss = self._compute_loss(batch)
