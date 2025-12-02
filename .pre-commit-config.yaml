@@ -17,3 +17,4 @@ repos:
         args:
           - --fix
           - --exit-non-zero-on-fix
+          - --ignore=E501  # Allow long lines (warning only)
