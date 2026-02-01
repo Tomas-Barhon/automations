@@ -332,7 +332,8 @@ class OutlookConnector(EmailConnector):
             "$top": limit,
             "$skip": skip,
             "$orderby": "receivedDateTime desc",
-            "$select": "id,subject,from,toRecipients,ccRecipients,bodyPreview,body,"
+            "$select": "id,subject,from,toRecipients,ccRecipients,bodyPreview,"
+            "body,"
             "receivedDateTime,isRead,parentFolderId,importance,hasAttachments,"
             "conversationId,categories",
         }
@@ -606,7 +607,8 @@ class OutlookConnector(EmailConnector):
         params = {
             "$search": f'"{query}"',
             "$top": limit,
-            "$select": "id,subject,from,toRecipients,ccRecipients,bodyPreview,body"
+            "$select": "id,subject,from,toRecipients,ccRecipients,bodyPreview,"
+            "body"
             "receivedDateTime,isRead,parentFolderId,importance,hasAttachments,"
             "conversationId,categories",
         }

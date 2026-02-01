@@ -12,6 +12,8 @@ members = [
     "core",
     "scrapers",
     "dashboards",
+    "core/kafka",
+    "core/utils_decorators",
 ]
 
 [tool.ruff]

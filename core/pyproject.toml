@@ -13,3 +13,4 @@ dependencies = [
 
 [project.scripts]
 core = "core.main:main"
+

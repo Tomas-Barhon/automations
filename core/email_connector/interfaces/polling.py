@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-from typing import Dict, Any
 
 
 class PollingServiceInterface(ABC):
@@ -16,6 +15,6 @@ class PollingServiceInterface(ABC):
         pass
 
     @abstractmethod
-    def _save_state(self, state: Dict[str, Any]):
+    def _save_state(self):
         """Save the polling state."""
         pass
