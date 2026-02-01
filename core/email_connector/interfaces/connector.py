@@ -76,7 +76,7 @@ class EmailConnector(ABC):
         self.disconnect()
 
     @abstractmethod
-    def list_folders(self) -> list[EmailFolder]:
+    def list_folders(self, expand_subfolders: bool) -> list[EmailFolder]:
         """
         List all available folders/labels.
 

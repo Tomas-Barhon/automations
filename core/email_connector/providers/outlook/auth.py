@@ -63,7 +63,7 @@ class MSGraphAuthProvider(EmailAuthProvider):
         self._token_cache_path = token_cache_path
 
         self._token_cache = self._init_token_cache()
-        self._app = self._create_msal_app()
+        self._app: msal.ClientApplication = self._create_msal_app()
         self._access_token: str | None = None
         self._account: dict[str, Any] | None = None
 

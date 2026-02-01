@@ -63,8 +63,11 @@ result = app.acquire_token_by_device_flow(flow)
 if "access_token" in result:
     print("✅ Authentication successful!")
     print(
-        f"Account: {result.get('id_token_claims', {}).get(
-            'preferred_username', 'Unknown')}"
+        f"Account: {
+            result.get('id_token_claims', {}).get(
+                'preferred_username', 'Unknown'
+            )
+        }"
     )
 
     # Save token cache

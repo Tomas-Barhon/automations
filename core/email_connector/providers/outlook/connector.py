@@ -181,20 +181,25 @@ class OutlookConnector(EmailConnector):
         if not self._connected or not self._client:
             raise ConnectionError("Not connected. Call connect() first.")
 
-    def list_folders(self) -> list[EmailFolder]:
+    def list_folders(self, expand_subfolders: bool) -> list[EmailFolder]:
         """
         List all mail folders.
+
+        Parameters
+        ----------
+        expand_subfolders : bool
+            If True, recursively retrieves all subfolders.
 
         Returns
         -------
         list[EmailFolder]
-            List of all mail folders.
+            List of all mail folders (flattened if expand_subfolders=True).
         """
         self._ensure_connected()
-
         url = f"{self._base_mail_url}/mailFolders"
-        params = {"$top": 100}  # Get up to 100 folders
-
+        params = {"$top": 100}
+        if self._client is None:
+            raise ConnectionError("HTTP client is not initialized.")
         response = self._client.get(
             url, headers=self._get_headers(), params=params
         )
@@ -204,8 +209,49 @@ class OutlookConnector(EmailConnector):
         for item in data.get("value", []):
             folders.append(self._parse_folder(item))
 
+            # Recursively get child folders if requested
+            if expand_subfolders:
+                child_folders = self._get_child_folders_recursive(item["id"])
+                folders.extend(child_folders)
+
         logger.debug(f"Retrieved {len(folders)} mail folders")
         return folders
+
+    def _get_child_folders_recursive(
+        self, folder_id: str
+    ) -> list[EmailFolder]:
+        """
+        Recursively retrieve all child folders for a given folder.
+
+        Parameters
+        ----------
+        folder_id : str
+            The ID of the parent folder.
+
+        Returns
+        -------
+        list[EmailFolder]
+            List of all child folders (recursively).
+        """
+        url = f"{self._base_mail_url}/mailFolders/{folder_id}/childFolders"
+        params = {"$top": 100}
+
+        if self._client is None:
+            raise ConnectionError("HTTP client is not initialized.")
+        response = self._client.get(
+            url, headers=self._get_headers(), params=params
+        )
+        data = self._handle_response(response)
+
+        child_folders = []
+        for item in data.get("value", []):
+            child_folders.append(self._parse_folder(item))
+
+            # Recursively get grandchildren
+            grandchildren = self._get_child_folders_recursive(item["id"])
+            child_folders.extend(grandchildren)
+
+        return child_folders
 
     def get_folder(self, folder_id: str) -> EmailFolder:
         """
@@ -224,6 +270,8 @@ class OutlookConnector(EmailConnector):
         self._ensure_connected()
 
         url = f"{self._base_mail_url}/mailFolders/{folder_id}"
+        if self._client is None:
+            raise ConnectionError("HTTP client is not initialized.")
         response = self._client.get(url, headers=self._get_headers())
         data = self._handle_response(response)
 
@@ -284,7 +332,7 @@ class OutlookConnector(EmailConnector):
             "$top": limit,
             "$skip": skip,
             "$orderby": "receivedDateTime desc",
-            "$select": "id,subject,from,toRecipients,ccRecipients,bodyPreview,body"
+            "$select": "id,subject,from,toRecipients,ccRecipients,bodyPreview,body,"
             "receivedDateTime,isRead,parentFolderId,importance,hasAttachments,"
             "conversationId,categories",
         }
@@ -294,6 +342,8 @@ class OutlookConnector(EmailConnector):
         if filter_parts:
             params["$filter"] = " and ".join(filter_parts)
 
+        if self._client is None:
+            raise ConnectionError("HTTP client is not initialized.")
         response = self._client.get(
             url, headers=self._get_headers(), params=params
         )
@@ -373,6 +423,8 @@ class OutlookConnector(EmailConnector):
             "$expand": "attachments($select=id,name,contentType,size)",
         }
 
+        if self._client is None:
+            raise ConnectionError("HTTP client is not initialized.")
         response = self._client.get(
             url, headers=self._get_headers(), params=params
         )
@@ -475,7 +527,8 @@ class OutlookConnector(EmailConnector):
 
         url = f"{self._base_mail_url}/messages/{message_id}/move"
         payload = {"destinationId": target_folder_id}
-
+        if self._client is None:
+            raise ConnectionError("HTTP client is not initialized.")
         response = self._client.post(
             url,
             headers=self._get_headers(),
@@ -507,6 +560,8 @@ class OutlookConnector(EmailConnector):
         url = f"{self._base_mail_url}/messages/{message_id}"
         payload = {"isRead": is_read}
 
+        if self._client is None:
+            raise ConnectionError("HTTP client is not initialized.")
         response = self._client.patch(
             url,
             headers=self._get_headers(),
@@ -555,7 +610,8 @@ class OutlookConnector(EmailConnector):
             "receivedDateTime,isRead,parentFolderId,importance,hasAttachments,"
             "conversationId,categories",
         }
-
+        if self._client is None:
+            raise ConnectionError("HTTP client is not initialized.")
         response = self._client.get(
             url, headers=self._get_headers(), params=params
         )
