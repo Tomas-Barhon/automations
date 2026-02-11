@@ -7,36 +7,18 @@ requires-python = ">=3.12"
 dependencies = []
 
 [tool.uv.workspace]
-members = [
-    "jarvis",
-    "core",
-    "scrapers",
-    "dashboards",
-    "core/kafka",
-    "core/utils_decorators",
-]
+members = ["jarvis", "core", "scrapers", "dashboards"]
 
 [tool.ruff]
 line-length = 79
 target-version = "py312"
 
 [tool.ruff.lint]
-select = [
-    "E",
-    "F",
-    "W",
-    "I",
-    "B",
-]
+select = ["E", "F", "W", "I", "B"]
 ignore = []
 
 [tool.ruff.lint.isort]
-known-first-party = [
-    "core",
-    "dashboards",
-    "jarvis",
-    "scrapers",
-]
+known-first-party = ["core", "dashboards", "jarvis", "scrapers"]
 
 [tool.ruff.format]
 quote-style = "double"
