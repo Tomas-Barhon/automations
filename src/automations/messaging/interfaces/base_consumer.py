@@ -1,4 +1,4 @@
-from core.email_connector.interfaces.polling import PollingServiceInterface
+from email_connector.interfaces.polling import PollingServiceInterface
 
 
 class KafkaConsumerInterface(PollingServiceInterface):

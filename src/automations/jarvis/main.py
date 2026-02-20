@@ -1,5 +1,5 @@
-# from src.agents.jarvis import JARVIS
-# from src.speech.text_to_speech import TextToSpeach
+from src.agents.jarvis import JARVIS
+from src.speech.text_to_speech import TextToSpeach
 
 
 def py_error_handler(filename, line, function, err, fmt):

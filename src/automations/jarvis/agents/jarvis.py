@@ -1,10 +1,3 @@
-"""This module contains the main logic for the brain of JARVIS served by
-OpenAI Chat-GPT model.
-
-Returns:
-    _type_: _description_
-"""
-
 import os
 import time
 from typing import Annotated, Tuple, TypedDict
@@ -47,6 +40,7 @@ class JARVIS:
         self.toolkit = Toolset()
 
         self.agent = self.llm.bind_tools(self.toolkit.get_tools())
+
         # Building LangGraph workflow
         self.langchain_graph_builder = StateGraph(state_schema=AgentState)
         self.langchain_graph_builder.add_node("model", self.call_model)

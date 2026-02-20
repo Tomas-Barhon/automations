@@ -1,3 +1,6 @@
+import core
+
+
 def main():
     print("Hello from dashboards!")
 

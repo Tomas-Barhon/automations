@@ -4,10 +4,17 @@ version = "0.1.0"
 description = "Project encompassing various automation scripts."
 readme = "README.md"
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "dotenv>=0.9.9",
+    "langchain>=1.2.10",
+    "langchain-ollama>=1.0.1",
+    "ollama>=0.6.1",
+]
 
-[tool.uv.workspace]
-members = ["jarvis", "core", "scrapers", "dashboards"]
+[build-system]
+requires = ["uv_build>=0.10.4,<0.11.0"]
+build-backend = "uv_build"
+
 
 [tool.ruff]
 line-length = 79
@@ -17,8 +24,6 @@ target-version = "py312"
 select = ["E", "F", "W", "I", "B"]
 ignore = []
 
-[tool.ruff.lint.isort]
-known-first-party = ["core", "dashboards", "jarvis", "scrapers"]
 
 [tool.ruff.format]
 quote-style = "double"
