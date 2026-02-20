@@ -1,21 +1,19 @@
 """Class encapsulating different tools for AI reactive agents."""
 
-from langchain.agents import Tool
-from langchain_community.tools import DuckDuckGoSearchResults
+from dataclasses import dataclass, Field
+from langchain_core.tools import Tool
 
 
-class Toolset:
-    def __init__(self) -> None:
-        # prebuilt tools from langchain
-        self.search_duck_duck_go = DuckDuckGoSearchResults()
-        self.tools = [
-            Tool(
-                name="Search",
-                func=self.search_duck_duck_go.run,
-                description="useful for when you need to answer questions \
-                about current events",
-            )
-        ]
+@dataclass
+class Toolkit:
+    tools: list[Tool]
 
-    def get_tools(self):
-        return self.tools
+    def __post_init__(self):
+        if self.tools is None:
+            raise ValueError("Tools must be provided to the Toolkit.")
+        if not all(isinstance(tool, Tool) for tool in self.tools):
+            raise ValueError("All items in tools must be instances of Tool.")
+        self.tool_calls = {tool.name: tool for tool in self.tools}
+
+    def __repr__(self):
+        return f"Toolkit(tools={self.tools})"
