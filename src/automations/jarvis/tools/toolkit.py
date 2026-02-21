@@ -1,23 +1,38 @@
 from enum import Enum
 from dataclasses import dataclass
 from langchain_core.tools import Tool
-from langchain_community.agent_toolkits import SlackToolkit
+from langchain_community.agent_toolkits import SlackToolkit, O365Toolkit
 from langchain_community.document_loaders import (
-    NotionDirectoryLoader,
     NotionDBLoader,
+    WeatherDataLoader,
 )
+from langchain_google_community import CalendarToolkit
 from dotenv import load_dotenv
-import os
+from automations.jarvis.tools.tool_wrappers import (
+    create_notion_tool,
+    create_weather_tool,
+)
 
 
-class AvailableTools(Enum):
+class AvailableToolkits(Enum):
     SLACK = SlackToolkit
+    CALENDAR = CalendarToolkit
+    OUTLOOK = O365Toolkit
+
+
+TOOL_REGISTRY = {
+    "NOTION_DB": create_notion_tool,
+    "WEATHER": create_weather_tool,
+}
+
+
+class AvailableLoaders(Enum):
     NOTION_DB = NotionDBLoader
-    NOTION_DIR = NotionDirectoryLoader
+    WEATHER = WeatherDataLoader
 
 
 @dataclass
-class Toolkit:
+class AgentTools:
     tools: list[Tool]
 
     def __post_init__(self):
@@ -30,19 +45,22 @@ class Toolkit:
     def __repr__(self):
         return f"Toolkit(tools={self.tools})"
 
-
-filter_object = {
-    "property": "Name",  # change if your title property has a different name
-    "title": {"equals": "Graduation photos"},
-}
-load_dotenv()
-NOTION_TOKEN = os.getenv("NOTION_TOKEN")
-NOTION_DATABASE_ID = os.getenv("NOTION_DATABASE_ID")
-loader = NotionDBLoader(
-    integration_token=NOTION_TOKEN,
-    database_id=NOTION_DATABASE_ID,
-    request_timeout_sec=30,
-    filter_object=filter_object,
-)
-docks = loader.load()
-print(docks)
+    # NOTE: Consider tool specific kwargs
+    @classmethod
+    def from_tool_names(
+        cls, tool_names: list[str], **tool_kwargs
+    ) -> "AgentTools":
+        load_dotenv()
+        tools = []
+        # TODO: add kwargs support for tools that require it
+        for name in tool_names:
+            if name in AvailableToolkits.__members__:
+                toolkit_class = AvailableToolkits[name].value
+                tools.extend(toolkit_class(**tool_kwargs).get_tools())
+            elif name in TOOL_REGISTRY:
+                tool_func = TOOL_REGISTRY[name]
+                tool = tool_func(name=name, **tool_kwargs)
+                tools.append(tool)
+            else:
+                raise ValueError(f"Unsupported tool class or func: {name}")
+        return cls(tools=tools)

@@ -4,7 +4,7 @@ from typing import Annotated, TypedDict, Optional
 from langchain.chat_models import BaseChatModel
 from langgraph.graph.message import add_messages
 from langgraph.graph.state import CompiledStateGraph
-from automations.jarvis.tools.toolkit import Toolkit
+from automations.jarvis.tools.toolkit import AgentTools
 from automations.jarvis.memory.memory_factory import (
     MemoryType,
     AgentMemoryFactory,
@@ -21,18 +21,21 @@ class BaseAgent(ABC):
     def __init__(
         self,
         chat_model: BaseChatModel,
-        toolkit: Toolkit,
+        toolkit: AgentTools,
         memory_type: MemoryType,
+        name: Optional[str] = "Agent",
         prompt_dir: Optional[Path | str] = None,
     ) -> None:
         self.chat_model = chat_model
         self.toolkit = toolkit
         self.agent = self.chat_model.bind_tools(self.toolkit.tools)
         self.memory = AgentMemoryFactory()._create_memory(memory_type)
+        self.name = name
         # TODO: refactor default
         self.prompt_loader = PromptLoader(
             prompt_dir or Path("src/automations/jarvis/prompts")
         )
+        self.prompt: Optional[dict] = None
 
     @abstractmethod
     def build_graph(self) -> StateGraph:

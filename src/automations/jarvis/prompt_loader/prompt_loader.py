@@ -1,5 +1,6 @@
 from enum import Enum
 from pathlib import Path
+from typing import Literal
 
 
 class PromptType(Enum):
@@ -15,7 +16,7 @@ class PromptLoader:
 
     def load_prompt(
         self, prompt_file_name: Path | str, prompt_type: PromptType
-    ) -> dict:
+    ) -> dict[str, str]:
         assert prompt_type in PromptType, f"Invalid prompt type: {prompt_type}"
         assert isinstance(
             prompt_file_name, (str, Path)
