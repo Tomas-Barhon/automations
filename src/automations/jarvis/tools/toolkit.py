@@ -1,7 +1,19 @@
-"""Class encapsulating different tools for AI reactive agents."""
-
-from dataclasses import dataclass, Field
+from enum import Enum
+from dataclasses import dataclass
 from langchain_core.tools import Tool
+from langchain_community.agent_toolkits import SlackToolkit
+from langchain_community.document_loaders import (
+    NotionDirectoryLoader,
+    NotionDBLoader,
+)
+from dotenv import load_dotenv
+import os
+
+
+class AvailableTools(Enum):
+    SLACK = SlackToolkit
+    NOTION_DB = NotionDBLoader
+    NOTION_DIR = NotionDirectoryLoader
 
 
 @dataclass
@@ -17,3 +29,20 @@ class Toolkit:
 
     def __repr__(self):
         return f"Toolkit(tools={self.tools})"
+
+
+filter_object = {
+    "property": "Name",  # change if your title property has a different name
+    "title": {"equals": "Graduation photos"},
+}
+load_dotenv()
+NOTION_TOKEN = os.getenv("NOTION_TOKEN")
+NOTION_DATABASE_ID = os.getenv("NOTION_DATABASE_ID")
+loader = NotionDBLoader(
+    integration_token=NOTION_TOKEN,
+    database_id=NOTION_DATABASE_ID,
+    request_timeout_sec=30,
+    filter_object=filter_object,
+)
+docks = loader.load()
+print(docks)

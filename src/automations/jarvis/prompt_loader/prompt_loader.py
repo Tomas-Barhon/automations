@@ -1,4 +1,5 @@
 from enum import Enum
+from pathlib import Path
 
 
 class PromptType(Enum):
@@ -7,24 +8,25 @@ class PromptType(Enum):
 
 
 class PromptLoader:
-    def __init__(
-        self,
-        prompt_file_path: str,
-        prompt_type: PromptType = PromptType.SYSTEM,
-    ) -> None:
-        self.prompt_file_path = prompt_file_path
-        assert isinstance(prompt_file_path, str), (
-            "Prompt file path must be a string."
-        )
-        assert prompt_file_path.endswith(".txt"), (
-            "Prompt file must be a .txt file."
-        )
-        assert isinstance(prompt_type, PromptType), (
-            "Prompt type must be an instance of PromptType."
-        )
-        self.prompt_type = prompt_type
+    def __init__(self, prompt_dir: Path | str) -> None:
+        if isinstance(prompt_dir, str):
+            prompt_dir = Path(prompt_dir)
+        self.prompt_dir = prompt_dir
 
-    def load_prompt(self):
-        with open(self.prompt_file_path, "r") as file:
+    def load_prompt(
+        self, prompt_file_name: Path | str, prompt_type: PromptType
+    ) -> dict:
+        assert prompt_type in PromptType, f"Invalid prompt type: {prompt_type}"
+        assert isinstance(
+            prompt_file_name, (str, Path)
+        ), f"""Prompt file name must be a string or Path, got:
+            {type(prompt_file_name)}"""
+
+        if isinstance(prompt_file_name, str):
+            prompt_file_name = Path(prompt_file_name)
+        prompt_file_path = self.prompt_dir / prompt_file_name
+        with open(prompt_file_path, "r") as file:
             prompt = file.read()
-        return prompt
+
+        # TODO: Check whether the keys are correct in langchain
+        return {"type": prompt_type.value, "content": prompt}
